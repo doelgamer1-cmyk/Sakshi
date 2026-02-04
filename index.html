@@ -1,1 +1,154 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TEST 1: THE SYLLABUS</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@300;800&display=swap');
+
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            background: #000; font-family: 'Montserrat', sans-serif;
+            color: #c5a059; overflow: hidden; position: fixed;
+        }
+
+        /* High-Visibility Cinematic Intro */
+        .intro-screen {
+            position: fixed; inset: 0; background: #000; z-index: 1000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; transition: opacity 0.8s ease-in-out;
+        }
+
+        .cinzel { font-family: 'Cinzel', serif; letter-spacing: 6px; text-transform: uppercase; }
+        
+        #stage-1 h1 { font-size: 2.5rem; letter-spacing: 8px; color: #fff; margin: 0; }
+        #stage-1 h2 { font-size: 1.5rem; color: #c5a059; margin-top: 10px; border-top: 1px solid #c5a059; padding-top: 10px; }
+        
+        #stage-2 p { font-size: 0.9rem; letter-spacing: 3px; max-width: 85%; line-height: 2; color: #fff; }
+
+        /* Quiz Layout */
+        #quiz-wrap {
+            display: none; width: 100%; height: 100%; flex-direction: column;
+            align-items: center; justify-content: center; padding: 30px; box-sizing: border-box;
+        }
+
+        .creator-tag { position: absolute; top: 20px; font-size: 0.6rem; letter-spacing: 3px; color: #c5a059; opacity: 0.7; }
+
+        .q-card { width: 100%; max-width: 340px; text-align: center; }
+        .q-text { font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 25px; line-height: 1.4; }
+
+        .opt {
+            width: 100%; padding: 15px; margin: 8px 0; background: transparent;
+            border: 1px solid rgba(197, 160, 89, 0.5); color: #c5a059; border-radius: 4px;
+            cursor: pointer; font-family: 'Montserrat'; font-weight: 700;
+            transition: 0.3s; font-size: 0.85rem;
+        }
+        .opt:active { background: #c5a059; color: #000; }
+
+        #progress-bar { width: 100%; height: 3px; background: #111; margin-bottom: 15px; }
+        #progress-fill { width: 10%; height: 100%; background: #c5a059; }
+    </style>
+</head>
+<body>
+
+    <div id="stage-1" class="intro-screen">
+        <h1 class="cinzel">TEST 1</h1>
+        <h2 class="cinzel">BY LAKSHYA</h2>
+    </div>
+
+    <div id="stage-2" class="intro-screen" style="display:none; opacity:0;">
+        <p class="cinzel">
+            SYLLABUS:<br> 
+            <span style="color:#c5a059; font-size: 1.2rem;">"How to talk to girls"</span><br> 
+            <small style="font-size: 0.6rem; opacity: 0.6;">(YouTube Tutorial Mode: ON)</small>
+        </p>
+    </div>
+
+    <div id="quiz-wrap">
+        <div class="creator-tag cinzel">Curated by Lakshya</div>
+        <div class="q-card">
+            <div id="progress-bar"><div id="progress-fill"></div></div>
+            <p id="step-count" style="font-size:0.6rem; letter-spacing:2px; margin-bottom:15px;"></p>
+            <div class="q-text" id="q-text">Loading...</div>
+            <div id="opt-box"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        const questions = [
+            { q: "YouTube says I should ask: Charizard X or Charizard Y?", a: ["Charizard X (Blue & Moody) 🔥", "Charizard Y (Classic & Sassy) 🐉", "Me (The real vibe here)"] },
+            { q: "If you were a potato, which form would you take?", a: ["Aloo Paratha (Premium) 🥐", "French Fry (Thin & Salty) 🍟", "Couch Potato (Legendary) 😴"] },
+            { q: "My jokes are legally classified as...?", a: ["Funny (Obv)", "Emotional Damage 💀", "So bad they're good"] },
+            { q: "Maggi bina masala ke khana is a...?", a: ["Crime against humanity", "Lakshya-certified sin", "Psychopath behavior"] },
+            { q: "Your current energy in one Pokemon?", a: ["Pikachu (Full Charge) ⚡", "Snorlax (Do not disturb) 💤", "Psyduck (Always confused) 😵‍💫"] },
+            { q: "What's Lakshya's most 'Chatpata' trait?", a: ["Infinite Rizz (from YT)", "Lame Humor 🤡", "This Quiz 📱"] },
+            { q: "At a party, where would I find you?", a: ["Dancing like no one's looking", "In the corner with snacks 🥘", "Searching for me? 🔍"] },
+            { q: "What's your secret 'Superpower'?", a: ["Professional Overthinking", "Sleeping through 10 alarms", "Tolerating Lakshya (Pro) 🏆"] },
+            { q: "Best weekend plan for a 'Strangi' soul?", a: ["Adventure trip 🚗", "Ghar pe soke rehna 😴", "Re-watching my tutorials"] },
+            { q: "Final Grade: Be my Valentine?", a: ["Pass (Valentine Ban jao) ❤️", "Pass (Haa bol do) ✨", "Pass (Chal nikal date pe) 🚗"] }
+        ];
+
+        let cur = 0;
+
+        window.onload = () => {
+            // Step 1: Show "By Lakshya"
+            setTimeout(() => {
+                document.getElementById('stage-1').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('stage-1').style.display = 'none';
+                    // Step 2: Show Syllabus
+                    const s2 = document.getElementById('stage-2');
+                    s2.style.display = 'flex';
+                    setTimeout(() => { s2.style.opacity = '1'; }, 50);
+                    setTimeout(() => {
+                        s2.style.opacity = '0';
+                        setTimeout(() => {
+                            s2.style.display = 'none';
+                            // Step 3: Show Quiz
+                            document.getElementById('quiz-wrap').style.display = 'flex';
+                            render();
+                        }, 800);
+                    }, 3500);
+                }, 800);
+            }, 3000); // 3 seconds for your name reveal
+        };
+
+        function render() {
+            const data = questions[cur];
+            document.getElementById('step-count').innerText = `STEP ${cur + 1} / 10`;
+            document.getElementById('progress-fill').style.width = `${(cur + 1) * 10}%`;
+            document.getElementById('q-text').innerText = data.q;
+            const box = document.getElementById('opt-box');
+            box.innerHTML = '';
+            data.a.forEach(opt => {
+                const b = document.createElement('button');
+                b.className = 'opt';
+                b.innerText = opt;
+                b.onclick = () => {
+                    cur++;
+                    if(cur < questions.length) render();
+                    else finish();
+                };
+                box.appendChild(b);
+            });
+        }
+
+        function finish() {
+            document.getElementById('quiz-wrap').innerHTML = `
+                <h1 class="cinzel" style="font-size:1.5rem; color:#c5a059;">SYLLABUS PASSED</h1>
+                <p style="color:#fff; margin:20px 0; font-size:0.9rem; line-height:1.8;">
+                    Certified <b>Strangi</b> Status: Active<br>
+                    Logic Provider: <b>Lakshya</b><br>
+                    <small>(Credits: YouTube Tutorials)</small>
+                </p>
+                <div style="font-size:3.5rem; margin:20px 0;">🍭</div>
+                <h2 class="cinzel" style="font-size:1.1rem; color:#fff;">So, Valentine's is fixed?</h2>
+            `;
+            confetti({ particleCount: 500, spread: 160, origin: { y: 0.6 }, colors: ['#c5a059', '#ffffff'] });
+        }
+    </script>
+</body>
+</html>
